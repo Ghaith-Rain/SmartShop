@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -20,14 +21,11 @@ import com.ghaith.smartshop.viewmodel.ProductViewModel
 fun ProductListScreen(
     vm: ProductViewModel,
     onAddClicked: () -> Unit,
-    onProductClicked: (Long) -> Unit
+    onProductClicked: (Long) -> Unit,
+    onEditClicked: (Long) -> Unit   // <-- ADD THIS PARAMETER
 ) {
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Products") }
-            )
-        },
+        topBar = { TopAppBar(title = { Text("Products") }) },
         floatingActionButton = {
             FloatingActionButton(onClick = onAddClicked) {
                 Icon(Icons.Default.Add, contentDescription = "Add Product")
@@ -38,6 +36,7 @@ fun ProductListScreen(
         ProductListContent(
             vm = vm,
             onProductClicked = onProductClicked,
+            onEditClicked = onEditClicked,  // <-- PASS IT HERE
             modifier = Modifier.padding(paddingValues)
         )
     }
@@ -47,6 +46,7 @@ fun ProductListScreen(
 fun ProductListContent(
     vm: ProductViewModel,
     onProductClicked: (Long) -> Unit,
+    onEditClicked: (Long) -> Unit,  // <-- ADD THIS
     modifier: Modifier = Modifier
 ) {
     val products by vm.products.collectAsState()
@@ -64,7 +64,8 @@ fun ProductListContent(
                 ProductItem(
                     product = product,
                     onClick = { onProductClicked(product.id) },
-                    onDelete = { vm.delete(product) }
+                    onDelete = { vm.delete(product) },
+                    onEdit = { onEditClicked(product.id) }  // <-- FIXED
                 )
                 Spacer(modifier = Modifier.height(8.dp))
             }
@@ -76,7 +77,8 @@ fun ProductListContent(
 fun ProductItem(
     product: Product,
     onClick: () -> Unit,
-    onDelete: () -> Unit
+    onDelete: () -> Unit,
+    onEdit: () -> Unit   // <-- FIXED SIGNATURE
 ) {
     Card(
         modifier = Modifier
@@ -97,8 +99,14 @@ fun ProductItem(
                 Text("Price: ${product.price}")
             }
 
-            IconButton(onClick = onDelete) {
-                Icon(Icons.Default.Delete, contentDescription = "Delete")
+            Row {
+                IconButton(onClick = onEdit) {
+                    Icon(Icons.Default.Edit, contentDescription = "Edit")
+                }
+
+                IconButton(onClick = onDelete) {
+                    Icon(Icons.Default.Delete, contentDescription = "Delete")
+                }
             }
         }
     }

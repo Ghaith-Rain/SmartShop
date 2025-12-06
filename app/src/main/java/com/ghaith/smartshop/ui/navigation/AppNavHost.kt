@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import com.ghaith.smartshop.viewmodel.ProductViewModel
 import com.ghaith.smartshop.ui.screens.ProductListScreen
 import com.ghaith.smartshop.ui.screens.AddProductScreen
+import com.ghaith.smartshop.ui.screens.EditProductScreen
 
 @Composable
 fun AppNavHost(
@@ -15,23 +16,38 @@ fun AppNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = NavRoutes.PRODUCT_LIST
+        startDestination = "product_list"
     ) {
         // Home screen
-        composable(NavRoutes.PRODUCT_LIST) {
+        composable("product_list") {
             ProductListScreen(
                 vm = vm,
                 onAddClicked = { navController.navigate("add_product") },
-                onProductClicked = { id -> /* TODO */ }
+                onProductClicked = { id -> /* optional */ },
+                onEditClicked = { id -> navController.navigate("edit_product/$id") }
             )
         }
 
         // Add product screen
-        composable(NavRoutes.ADD_PRODUCT) {
+        composable("add_product") {
             AddProductScreen(
                 vm = vm,
                 onDone = { navController.popBackStack() }
             )
         }
+
+        composable(
+            route = "edit_product/{id}"
+        ) { backStackEntry ->
+
+            val id = backStackEntry.arguments?.getString("id")!!.toLong()
+
+            EditProductScreen(
+                vm = vm,
+                productId = id,
+                onDone = { navController.popBackStack() }
+            )
+        }
+
     }
 }
