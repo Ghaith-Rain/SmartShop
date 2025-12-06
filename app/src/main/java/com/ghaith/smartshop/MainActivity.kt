@@ -3,45 +3,44 @@ package com.ghaith.smartshop
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.activity.viewModels
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.ghaith.smartshop.ui.theme.SmartShopTheme
+import androidx.navigation.compose.rememberNavController
+import com.ghaith.smartshop.data.local.AppDatabase
+import com.ghaith.smartshop.data.repository.ProductRepository
+import com.ghaith.smartshop.viewmodel.ProductViewModel
+import com.ghaith.smartshop.viewmodel.ProductViewModelFactory
+import com.ghaith.smartshop.ui.navigation.AppNavHost
 
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+
+        // 1) Build DB
+        val db = AppDatabase.getInstance(applicationContext)
+
+        // 2) Build repo
+        val repo = ProductRepository(db.productDao())
+
+        // 3) Build ViewModel using factory
+        val vm: ProductViewModel by viewModels {
+            ProductViewModelFactory(repo)
+        }
+
         setContent {
-            SmartShopTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
-            }
+            SmartShopApp(vm)
         }
     }
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+fun SmartShopApp(vm: ProductViewModel) {
+    val navController = rememberNavController()
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    SmartShopTheme {
-        Greeting("Android")
+    Surface(color = MaterialTheme.colorScheme.background) {
+        AppNavHost(navController = navController, vm = vm)
     }
 }
