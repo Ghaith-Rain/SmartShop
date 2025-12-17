@@ -31,7 +31,8 @@ fun ProductListScreen(
     vm: ProductViewModel,
     onAddClicked: () -> Unit,
     onProductClicked: (String) -> Unit,
-    onEditClicked: (String) -> Unit
+    onEditClicked: (String) -> Unit,
+    onChartClicked: () -> Unit
 ) {
     val products by vm.products.collectAsState()
     val uiMessage by vm.uiMessage.collectAsState()
@@ -64,6 +65,15 @@ fun ProductListScreen(
                             "Inventory Management",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                },
+                actions = {
+                    IconButton(onClick = onChartClicked) {
+                        Icon(
+                            Icons.Default.BarChart,
+                            contentDescription = "View Analytics",
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer
                         )
                     }
                 },
@@ -135,7 +145,7 @@ fun ProductListContent(
                 StatItem(
                     icon = Icons.Default.AttachMoney,
                     label = "Total Value",
-                    value = "$$%.2f".format(totalValue)
+                    value = "$%.2f".format(totalValue)
                 )
             }
         }

@@ -8,6 +8,7 @@ import com.ghaith.smartshop.viewmodel.ProductViewModel
 import com.ghaith.smartshop.ui.screens.ProductListScreen
 import com.ghaith.smartshop.ui.screens.AddProductScreen
 import com.ghaith.smartshop.ui.screens.EditProductScreen
+import com.ghaith.smartshop.ui.screens.ChartScreen
 
 @Composable
 fun AppNavHost(
@@ -24,7 +25,8 @@ fun AppNavHost(
                 vm = vm,
                 onAddClicked = { navController.navigate("add_product") },
                 onProductClicked = { id -> /* optional */ },
-                onEditClicked = { id -> navController.navigate("edit_product/$id") }
+                onEditClicked = { id -> navController.navigate("edit_product/$id") },
+                onChartClicked = { navController.navigate("chart") }
             )
         }
 
@@ -46,6 +48,14 @@ fun AppNavHost(
                 vm = vm,
                 productId = id,
                 onDone = { navController.popBackStack() }
+            )
+        }
+        
+        // Chart screen
+        composable("chart") {
+            ChartScreen(
+                vm = vm,
+                onBack = { navController.popBackStack() }
             )
         }
 
