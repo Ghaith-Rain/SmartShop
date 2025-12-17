@@ -11,6 +11,10 @@ class ProductViewModel(
     private val repo: ProductRepository
 ) : ViewModel() {
 
+    init {
+        repo.startListening()
+    }
+
     val products: StateFlow<List<Product>> =
         repo.getAll().stateIn(
             scope = viewModelScope,

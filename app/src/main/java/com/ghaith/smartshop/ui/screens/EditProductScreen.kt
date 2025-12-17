@@ -15,7 +15,7 @@ import com.ghaith.smartshop.viewmodel.ProductViewModel
 @Composable
 fun EditProductScreen(
     vm: ProductViewModel,
-    productId: Long,
+    productId: String,
     onDone: () -> Unit
 ) {
     val products by vm.products.collectAsState()

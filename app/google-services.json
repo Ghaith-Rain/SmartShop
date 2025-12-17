@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "498269094039",
+    "project_id": "project-3534f010-347a-4a91-86a",
+    "storage_bucket": "project-3534f010-347a-4a91-86a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:498269094039:android:a4a235553952445566e9d2",
+        "android_client_info": {
+          "package_name": "com.ghaith.smartshop"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDXVceSBDpwHSWkzWEvM2NzpIiCAIBPPHU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

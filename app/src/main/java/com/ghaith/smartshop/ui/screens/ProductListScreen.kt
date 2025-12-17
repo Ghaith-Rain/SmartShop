@@ -21,8 +21,8 @@ import com.ghaith.smartshop.viewmodel.ProductViewModel
 fun ProductListScreen(
     vm: ProductViewModel,
     onAddClicked: () -> Unit,
-    onProductClicked: (Long) -> Unit,
-    onEditClicked: (Long) -> Unit   // <-- ADD THIS PARAMETER
+    onProductClicked: (String) -> Unit,
+    onEditClicked: (String) -> Unit
 ) {
     Scaffold(
         topBar = { TopAppBar(title = { Text("Products") }) },
@@ -45,8 +45,8 @@ fun ProductListScreen(
 @Composable
 fun ProductListContent(
     vm: ProductViewModel,
-    onProductClicked: (Long) -> Unit,
-    onEditClicked: (Long) -> Unit,  // <-- ADD THIS
+    onProductClicked: (String) -> Unit,
+    onEditClicked: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val products by vm.products.collectAsState()
@@ -65,7 +65,7 @@ fun ProductListContent(
                     product = product,
                     onClick = { onProductClicked(product.id) },
                     onDelete = { vm.delete(product) },
-                    onEdit = { onEditClicked(product.id) }  // <-- FIXED
+                    onEdit = { onEditClicked(product.id) }
                 )
                 Spacer(modifier = Modifier.height(8.dp))
             }

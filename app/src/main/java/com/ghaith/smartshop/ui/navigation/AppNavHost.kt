@@ -40,7 +40,7 @@ fun AppNavHost(
             route = "edit_product/{id}"
         ) { backStackEntry ->
 
-            val id = backStackEntry.arguments?.getString("id")!!.toLong()
+            val id = backStackEntry.arguments?.getString("id")!!
 
             EditProductScreen(
                 vm = vm,

@@ -10,7 +10,7 @@ interface ProductDao {
     fun getAll(): Flow<List<Product>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(product: Product): Long
+    suspend fun insert(product: Product)
 
     @Update
     suspend fun update(product: Product)
@@ -23,4 +23,9 @@ interface ProductDao {
 
     @Query("SELECT SUM(quantity * price) FROM products")
     suspend fun totalValue(): Double?
+
+    @Query("SELECT * FROM products WHERE id = :id LIMIT 1")
+    suspend fun getById(id: String): Product?
+
+
 }
