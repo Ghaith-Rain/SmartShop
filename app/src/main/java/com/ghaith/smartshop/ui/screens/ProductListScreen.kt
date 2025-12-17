@@ -1,5 +1,7 @@
 package com.ghaith.smartshop.ui.screens
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
@@ -19,6 +21,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.ghaith.smartshop.data.local.Product
@@ -37,10 +40,32 @@ fun ProductListScreen(
     val products by vm.products.collectAsState()
     val uiMessage by vm.uiMessage.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
 
     // Calculate stats reactively from products
     val stats = remember(products) {
         products.size to products.sumOf { it.quantity * it.price }
+    }
+
+    // CSV Export launcher
+    val exportLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.CreateDocument("text/csv")
+    ) { uri ->
+        uri?.let {
+            try {
+                context.contentResolver.openOutputStream(it)?.use { outputStream ->
+                    outputStream.write(vm.exportToCsv().toByteArray())
+                }
+                scope.launch {
+                    snackbarHostState.showSnackbar("CSV exported successfully")
+                }
+            } catch (e: Exception) {
+                scope.launch {
+                    snackbarHostState.showSnackbar("Failed to export: ${e.message}")
+                }
+            }
+        }
     }
 
     // Show snackbar messages
@@ -69,6 +94,18 @@ fun ProductListScreen(
                     }
                 },
                 actions = {
+                    IconButton(
+                        onClick = {
+                            val timestamp = System.currentTimeMillis()
+                            exportLauncher.launch("smartshop_inventory_$timestamp.csv")
+                        }
+                    ) {
+                        Icon(
+                            Icons.Default.Download,
+                            contentDescription = "Export CSV",
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                    }
                     IconButton(onClick = onChartClicked) {
                         Icon(
                             Icons.Default.BarChart,

@@ -66,4 +66,13 @@ class ProductViewModel(
     suspend fun stats(): Pair<Int, Double> {
         return repo.count() to repo.totalValue()
     }
+
+    fun exportToCsv(): String {
+        val header = "Name,Quantity,Price,Total Value,Last Updated\n"
+        val rows = products.value.joinToString("\n") { product ->
+            val totalValue = product.quantity * product.price
+            "\"${product.name}\",${product.quantity},${product.price},${totalValue},${product.lastUpdated}"
+        }
+        return header + rows
+    }
 }
