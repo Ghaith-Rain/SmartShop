@@ -2,6 +2,11 @@ package com.ghaith.smartshop.ui.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.filled.AttachMoney
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Inventory
+import androidx.compose.material.icons.filled.Save
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -27,7 +32,17 @@ fun AddProductScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Add Product") }
+                title = {
+                    Text(
+                        "Add New Product",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                    )
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                )
             )
         }
     ) { padding ->
@@ -35,10 +50,15 @@ fun AddProductScreen(
         Column(
             modifier = Modifier
                 .padding(padding)
-                .padding(16.dp)
+                .padding(24.dp)
                 .fillMaxSize(),
-            verticalArrangement = Arrangement.Top
+            verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
+            Text(
+                "Enter product details",
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
 
             // NAME FIELD
             OutlinedTextField(
@@ -48,18 +68,19 @@ fun AddProductScreen(
                     nameError = if (it.isBlank()) "Name cannot be empty" else null
                 },
                 label = { Text("Product Name") },
+                leadingIcon = {
+                    androidx.compose.material3.Icon(
+                        androidx.compose.material.icons.Icons.Default.ShoppingCart,
+                        contentDescription = null
+                    )
+                },
                 isError = nameError != null,
-                modifier = Modifier.fillMaxWidth()
+                supportingText = if (nameError != null) {
+                    { Text(nameError!!) }
+                } else null,
+                modifier = Modifier.fillMaxWidth(),
+                shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp)
             )
-            if (nameError != null) {
-                Text(
-                    nameError!!,
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodySmall
-                )
-            }
-
-            Spacer(Modifier.height(16.dp))
 
             // QUANTITY FIELD
             OutlinedTextField(
@@ -74,19 +95,20 @@ fun AddProductScreen(
                     }
                 },
                 label = { Text("Quantity") },
+                leadingIcon = {
+                    androidx.compose.material3.Icon(
+                        androidx.compose.material.icons.Icons.Default.Inventory,
+                        contentDescription = null
+                    )
+                },
                 isError = quantityError != null,
+                supportingText = if (quantityError != null) {
+                    { Text(quantityError!!) }
+                } else null,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp)
             )
-            if (quantityError != null) {
-                Text(
-                    quantityError!!,
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodySmall
-                )
-            }
-
-            Spacer(Modifier.height(16.dp))
 
             // PRICE FIELD
             OutlinedTextField(
@@ -101,19 +123,22 @@ fun AddProductScreen(
                     }
                 },
                 label = { Text("Price") },
+                leadingIcon = {
+                    androidx.compose.material3.Icon(
+                        androidx.compose.material.icons.Icons.Default.AttachMoney,
+                        contentDescription = null
+                    )
+                },
                 isError = priceError != null,
+                supportingText = if (priceError != null) {
+                    { Text(priceError!!) }
+                } else null,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp)
             )
-            if (priceError != null) {
-                Text(
-                    priceError!!,
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodySmall
-                )
-            }
 
-            Spacer(Modifier.height(32.dp))
+            Spacer(Modifier.weight(1f))
 
             val isFormValid =
                 nameError == null &&
@@ -123,20 +148,49 @@ fun AddProductScreen(
                         quantity.isNotBlank() &&
                         price.isNotBlank()
 
-            Button(
-                onClick = {
-                    vm.addProduct(
-                        name = name,
-                        quantity = quantity.toInt(),
-                        price = price.toDouble()
-                    )
-                    onDone()
-                },
-                enabled = isFormValid,
-                modifier = Modifier
-                    .align(Alignment.End)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Text("Save")
+                OutlinedButton(
+                    onClick = onDone,
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(56.dp),
+                    shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp)
+                ) {
+                    Text(
+                        "Cancel",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }
+
+                Button(
+                    onClick = {
+                        vm.addProduct(
+                            name = name,
+                            quantity = quantity.toInt(),
+                            price = price.toDouble()
+                        )
+                        onDone()
+                    },
+                    enabled = isFormValid,
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(56.dp),
+                    shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp)
+                ) {
+                    androidx.compose.material3.Icon(
+                        androidx.compose.material.icons.Icons.Default.Save,
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text(
+                        "Save",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }
             }
         }
     }

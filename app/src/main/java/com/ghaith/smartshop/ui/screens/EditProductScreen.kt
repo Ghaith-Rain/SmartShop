@@ -2,6 +2,11 @@ package com.ghaith.smartshop.ui.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.filled.AttachMoney
+import androidx.compose.material.icons.filled.ErrorOutline
+import androidx.compose.material.icons.filled.Inventory
+import androidx.compose.material.icons.filled.Save
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -23,7 +28,21 @@ fun EditProductScreen(
 
     if (product == null) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("Product not found")
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                androidx.compose.material3.Icon(
+                    androidx.compose.material.icons.Icons.Default.ErrorOutline,
+                    contentDescription = null,
+                    modifier = Modifier.size(64.dp),
+                    tint = MaterialTheme.colorScheme.error
+                )
+                Text(
+                    "Product not found",
+                    style = MaterialTheme.typography.titleLarge
+                )
+            }
         }
         return
     }
@@ -38,17 +57,34 @@ fun EditProductScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("Edit Product") })
+            TopAppBar(
+                title = {
+                    Text(
+                        "Edit Product",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                    )
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+            )
         }
     ) { padding ->
 
         Column(
             modifier = Modifier
                 .padding(padding)
-                .padding(16.dp)
+                .padding(24.dp)
                 .fillMaxSize(),
-            verticalArrangement = Arrangement.Top
+            verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
+            Text(
+                "Update product information",
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
 
             OutlinedTextField(
                 value = name,
@@ -57,14 +93,19 @@ fun EditProductScreen(
                     nameError = if (it.isBlank()) "Name cannot be empty" else null
                 },
                 label = { Text("Product Name") },
+                leadingIcon = {
+                    androidx.compose.material3.Icon(
+                        androidx.compose.material.icons.Icons.Default.ShoppingCart,
+                        contentDescription = null
+                    )
+                },
                 isError = nameError != null,
-                modifier = Modifier.fillMaxWidth()
+                supportingText = if (nameError != null) {
+                    { Text(nameError!!) }
+                } else null,
+                modifier = Modifier.fillMaxWidth(),
+                shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp)
             )
-            if (nameError != null) {
-                Text(nameError!!, color = MaterialTheme.colorScheme.error)
-            }
-
-            Spacer(Modifier.height(16.dp))
 
             OutlinedTextField(
                 value = quantity,
@@ -78,15 +119,20 @@ fun EditProductScreen(
                     }
                 },
                 label = { Text("Quantity") },
+                leadingIcon = {
+                    androidx.compose.material3.Icon(
+                        androidx.compose.material.icons.Icons.Default.Inventory,
+                        contentDescription = null
+                    )
+                },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 isError = quantityError != null,
-                modifier = Modifier.fillMaxWidth()
+                supportingText = if (quantityError != null) {
+                    { Text(quantityError!!) }
+                } else null,
+                modifier = Modifier.fillMaxWidth(),
+                shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp)
             )
-            if (quantityError != null) {
-                Text(quantityError!!, color = MaterialTheme.colorScheme.error)
-            }
-
-            Spacer(Modifier.height(16.dp))
 
             OutlinedTextField(
                 value = price,
@@ -100,35 +146,72 @@ fun EditProductScreen(
                     }
                 },
                 label = { Text("Price") },
+                leadingIcon = {
+                    androidx.compose.material3.Icon(
+                        androidx.compose.material.icons.Icons.Default.AttachMoney,
+                        contentDescription = null
+                    )
+                },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 isError = priceError != null,
-                modifier = Modifier.fillMaxWidth()
+                supportingText = if (priceError != null) {
+                    { Text(priceError!!) }
+                } else null,
+                modifier = Modifier.fillMaxWidth(),
+                shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp)
             )
-            if (priceError != null) {
-                Text(priceError!!, color = MaterialTheme.colorScheme.error)
-            }
 
-            Spacer(Modifier.height(32.dp))
+            Spacer(Modifier.weight(1f))
 
             val isFormValid =
                 nameError == null &&
                         quantityError == null &&
                         priceError == null
 
-            Button(
-                onClick = {
-                    val updated = product.copy(
-                        name = name,
-                        quantity = quantity.toInt(),
-                        price = price.toDouble()
-                    )
-                    vm.update(updated)
-                    onDone()
-                },
-                enabled = isFormValid,
-                modifier = Modifier.align(Alignment.End)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Text("Save Changes")
+                OutlinedButton(
+                    onClick = onDone,
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(56.dp),
+                    shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp)
+                ) {
+                    Text(
+                        "Cancel",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }
+
+                Button(
+                    onClick = {
+                        val updated = product.copy(
+                            name = name,
+                            quantity = quantity.toInt(),
+                            price = price.toDouble()
+                        )
+                        vm.update(updated)
+                        onDone()
+                    },
+                    enabled = isFormValid,
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(56.dp),
+                    shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp)
+                ) {
+                    androidx.compose.material3.Icon(
+                        androidx.compose.material.icons.Icons.Default.Save,
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text(
+                        "Save",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }
             }
         }
     }
